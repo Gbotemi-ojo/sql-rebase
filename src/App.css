@@ -1,0 +1,348 @@
+/* --- Global Styles & Variables --- */
+:root {
+  --primary-color: #6a5af9;
+  --primary-hover: #5a4af7;
+  --background-color: #f4f7fe;
+  --card-background: #ffffff;
+  --text-color: #344767;
+  --text-light: #6c757d;
+  --border-color: #e9ecef;
+  --success-bg: #e1f7e9;
+  --success-text: #1d6c3b;
+  --error-bg: #fde2e4;
+  --error-text: #9a2b2b;
+
+  font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* --- Main Layout & Container --- */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 3rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- Card & Form Styles --- */
+.card {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: #f9f9f9;
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(106, 90, 249, 0.15);
+}
+
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(106, 90, 249, 0.3);
+}
+button:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Quick Tools CTA Button --- */
+.copy-btn-cta {
+  background-color: #ff6b6b; /* A standout coral color */
+  font-weight: 600;
+}
+.copy-btn-cta:hover {
+  background-color: #f06;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+/* --- Category Manager Specifics --- */
+.category-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.category-form button {
+  width: auto;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.category-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+.category-list li:hover {
+  background-color: #f8f9fa;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  width: auto;
+}
+.delete-btn:hover {
+  color: #e5383b;
+  background-color: #fde2e4;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Results & Error Cards --- */
+.results, .error {
+  animation: slideInUp 0.4s ease-out;
+}
+.results {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-text);
+  color: var(--success-text);
+}
+.error {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-text);
+  color: var(--error-text);
+}
+.error-text {
+  color: var(--error-text);
+  font-size: 0.9em;
+  text-align: left;
+}
+
+/* --- Table Styles --- */
+.table-section {
+  margin-top: 3rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-container label {
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.filter-container select {
+  margin-bottom: 0;
+  width: auto;
+  min-width: 200px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background-color: #f8f9fa;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.8em;
+  font-weight: 500;
+  border-radius: 1rem;
+  background-color: #e9ecef;
+  color: var(--text-light);
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.8em;
+  font-weight: 600;
+  border-radius: 1rem;
+  color: white;
+  text-transform: uppercase;
+}
+
+.status-tag.status-new {
+  background-color: #6c757d;
+}
+
+.status-tag.status-messaged {
+  background-color: #198754;
+}
+
+/* --- UPDATED TABLE ACTIONS STYLES --- */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actions-cell button {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.copy-btn {
+  background-color: var(--text-light);
+}
+.copy-btn:hover {
+  background-color: var(--text-color);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* --- NEW GOOGLE BUTTON STYLE --- */
+.google-btn {
+  background-color: #4285F4; /* Google Blue */
+}
+.google-btn:hover {
+  background-color: #357ae8;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.whatsapp-btn {
+  background-color: #25d366;
+}
+.whatsapp-btn:hover {
+  background-color: #1ebe58;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+/* --- Animations & Spinners --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
