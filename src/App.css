@@ -118,3 +118,9 @@ body {
   transition: background 0.2s;
 }
 .msg-btn:active { background: #e2e8f0; transform: scale(0.98); }
+
+/* Add this to the bottom of src/App.css */
+.msg-btn:disabled {
+  cursor: wait;
+  background-color: #f1f5f9;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const MessageButton = ({ phone, imageUrl, text, label }) => {
-  const [status, setStatus] = useState('idle'); // idle, loading, success, error
+  const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
     const cleanPhone = phone.replace(/\D/g, ''); 
@@ -12,43 +12,33 @@ const MessageButton = ({ phone, imageUrl, text, label }) => {
       return;
     }
 
-    setStatus('loading');
+    setLoading(true);
 
     try {
-      // 1. Fetch the image
-      // "crossOrigin" is crucial for Cloudinary images to be allowed in the clipboard
-      const response = await fetch(imageUrl, { mode: 'cors', credentials: 'omit' });
-      if (!response.ok) throw new Error("Failed to fetch image");
-      
+      // 1. Fetch the image as a "Blob" (File object)
+      const response = await fetch(imageUrl, { mode: 'cors' });
       const blob = await response.blob();
-
-      // 2. Prepare the Clipboard Item
-      // Some browsers (like Safari) are very strict about MIME types.
-      // We wrap this in a try/catch specifically for the copy operation.
-      try {
-        const item = new ClipboardItem({ [blob.type]: blob });
-        await navigator.clipboard.write([item]);
-        
-        // 3. Success! Show Alert then Open
-        setStatus('success');
-        alert("✅ IMAGE COPIED!\n\n1. WhatsApp will open.\n2. Tap the text box.\n3. PASTE the image.");
-        
-        // Open WhatsApp
+      
+      // 2. Create a temporary link to FORCE download
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `outreach-lead-${cleanPhone}.jpg`; // Name of saved file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // 3. Small delay to let the download start, then open WhatsApp
+      setTimeout(() => {
         window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
-        
-      } catch (clipboardError) {
-        console.error("Clipboard failed", clipboardError);
-        // If clipboard fails (common on non-HTTPS or specific Android versions),
-        // we fallback to just text but warn the user.
-        alert("⚠️ Could not auto-copy image.\n\nPlease long-press the image above to copy it manually, then click this button again.");
-        window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
-      }
+        setLoading(false);
+      }, 1000);
 
     } catch (err) {
-      console.error("Workflow failed", err);
-      alert("Error loading image. Please check your internet connection.");
-    } finally {
-      setStatus('idle');
+      console.error("Download failed", err);
+      alert("Could not save image automatically. Opening chat anyway...");
+      window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
+      setLoading(false);
     }
   };
 
@@ -56,13 +46,10 @@ const MessageButton = ({ phone, imageUrl, text, label }) => {
     <button 
       className="msg-btn" 
       onClick={handleSend} 
-      disabled={status === 'loading'}
-      style={{ 
-        opacity: status === 'loading' ? 0.7 : 1,
-        background: status === 'success' ? '#dcfce7' : undefined 
-      }}
+      disabled={loading || (!text && !imageUrl)}
+      style={{ opacity: loading ? 0.7 : 1 }}
     >
-       {status === 'loading' ? '⏳ Preparing...' : (
+       {loading ? '⬇️ Saving...' : (
          <>
            <span>{imageUrl ? '📸' : '💬'}</span> {label}
          </>
