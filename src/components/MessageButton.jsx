@@ -1,44 +1,40 @@
 import React, { useState } from 'react';
 
 const MessageButton = ({ phone, imageUrl, text, label }) => {
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle, copying, done
 
   const handleSend = async () => {
+    // 1. Clean phone number (remove spaces, +, etc.)
     const cleanPhone = phone.replace(/\D/g, ''); 
-    
-    // If no image, just open WhatsApp immediately
-    if (!imageUrl) {
-      window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`, '_blank');
-      return;
-    }
-
-    setLoading(true);
+    setStatus('copying');
 
     try {
-      // 1. Fetch the image as a "Blob" (File object)
-      const response = await fetch(imageUrl, { mode: 'cors' });
-      const blob = await response.blob();
-      
-      // 2. Create a temporary link to FORCE download
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = `outreach-lead-${cleanPhone}.jpg`; // Name of saved file
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // 3. Small delay to let the download start, then open WhatsApp
-      setTimeout(() => {
-        window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
-        setLoading(false);
-      }, 1000);
+      // 2. If there is an image, copy it to clipboard
+      if (imageUrl) {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        
+        // This writes the image binary to the clipboard
+        const item = new ClipboardItem({ [blob.type]: blob });
+        await navigator.clipboard.write([item]);
+        
+        // Short delay to ensure user sees the feedback
+        alert("📸 Image Copied! \n\n1. WhatsApp will open now.\n2. Tap the text box.\n3. Press PASTE.");
+      }
 
+      // 3. Open the specific WhatsApp Chat
+      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
+      window.location.href = waUrl; // Opens WhatsApp directly
+      
     } catch (err) {
-      console.error("Download failed", err);
-      alert("Could not save image automatically. Opening chat anyway...");
-      window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
-      setLoading(false);
+      console.error("Workflow failed", err);
+      alert("Could not auto-copy image. Please download it manually, then click this button again.");
+      
+      // Fallback: Just open WhatsApp without image if copy fails
+      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
+      window.location.href = waUrl;
+    } finally {
+      setStatus('idle');
     }
   };
 
@@ -46,10 +42,10 @@ const MessageButton = ({ phone, imageUrl, text, label }) => {
     <button 
       className="msg-btn" 
       onClick={handleSend} 
-      disabled={loading || (!text && !imageUrl)}
-      style={{ opacity: loading ? 0.7 : 1 }}
+      disabled={(!text && !imageUrl) || status === 'copying'}
+      style={{ opacity: status === 'copying' ? 0.7 : 1 }}
     >
-       {loading ? '⬇️ Saving...' : (
+       {status === 'copying' ? '⏳ Copying...' : (
          <>
            <span>{imageUrl ? '📸' : '💬'}</span> {label}
          </>
