@@ -11,8 +11,7 @@ const ContactList = ({ contacts, isLoading, onRefresh }) => {
   return (
     <div className="contact-list">
       {contacts.map((contact) => {
-        // Check if outreach is configured (has at least text for msg1)
-        const isSetup = contact.msg1_text || contact.msg1_image;
+        const isSetup = !!contact.msg1_text; // Check if at least Msg 1 is set
 
         if (editingId === contact.id) {
           return (
@@ -37,22 +36,48 @@ const ContactList = ({ contacts, isLoading, onRefresh }) => {
             {!isSetup ? (
               <div style={{textAlign: 'center', padding: '20px 0'}}>
                 <button className="primary-btn" onClick={() => setEditingId(contact.id)}>
-                  ⚙️ Setup Outreach Messages
+                  ⚙️ Setup Messages
                 </button>
               </div>
             ) : (
               <div>
-                {contact.msg1_image && <img src={contact.msg1_image} alt="Pitch" className="lead-image" />}
-                
-                <div className="action-grid">
-                  <MessageButton phone={contact.phoneNumber} imageUrl={contact.msg1_image} text={contact.msg1_text} label="1. Pitch" />
-                  <MessageButton phone={contact.phoneNumber} imageUrl={contact.msg2_image} text={contact.msg2_text} label="2. Follow Up" />
-                  <MessageButton phone={contact.phoneNumber} imageUrl={contact.msg3_image} text={contact.msg3_text} label="3. Closing" />
+                <div className="action-grid" style={{gridTemplateColumns: '1fr 1fr'}}>
+                  {/* 1. Opener (Text Only - Opens Direct Chat) */}
+                  <MessageButton 
+                    phone={contact.phoneNumber} 
+                    imageUrl={null} 
+                    text={contact.msg1_text} 
+                    label="1. Opener" 
+                  />
                   
-                  <button className="msg-btn" onClick={() => setEditingId(contact.id)} style={{gridColumn: 'span 2', justifyContent: 'center'}}>
-                    ✏️ Edit Messages
-                  </button>
+                  {/* 2. Pitch (Image - Uses Native Share) */}
+                  <MessageButton 
+                    phone={contact.phoneNumber} 
+                    imageUrl={contact.msg2_image} 
+                    text={contact.msg2_text} 
+                    label="2. Pitch" 
+                  />
+                  
+                  {/* 3. Follow Up (Image - Uses Native Share) */}
+                  <MessageButton 
+                    phone={contact.phoneNumber} 
+                    imageUrl={contact.msg3_image} 
+                    text={contact.msg3_text} 
+                    label="3. Follow Up" 
+                  />
+
+                  {/* 4. Closing (Image - Uses Native Share) */}
+                  <MessageButton 
+                    phone={contact.phoneNumber} 
+                    imageUrl={contact.msg4_image} 
+                    text={contact.msg4_text} 
+                    label="4. Closing" 
+                  />
                 </div>
+                  
+                <button className="msg-btn" onClick={() => setEditingId(contact.id)} style={{marginTop: '10px', width: '100%', justifyContent: 'center'}}>
+                  ✏️ Edit Messages
+                </button>
               </div>
             )}
           </div>
