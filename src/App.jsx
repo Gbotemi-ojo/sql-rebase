@@ -85,7 +85,7 @@ function App() {
         {activeTab === 'list' ? (
           <ContactList 
             contacts={contacts} 
-            niches={niches} /* <--- NEW: Passing the list of names down */
+            niches={niches}
             isLoading={loading} 
             onRefresh={fetchContacts} 
           />

@@ -1,7 +1,6 @@
 // src/api.js
 // const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const BASE_URL = 'https://sql-rebase-be.vercel.app'
-
+const BASE_URL = 'https://sql-rebase-be.vercel.app';
 export const api = {
   // --- Niche Endpoints ---
   getNiches: async () => {
@@ -24,7 +23,7 @@ export const api = {
     } catch (e) { throw e; }
   },
 
-  // --- Contact Endpoints (Keep existing ones) ---
+  // --- Contact Endpoints ---
   getContacts: async (nicheId) => {
     try {
       const url = nicheId ? `${BASE_URL}/contacts?nicheId=${nicheId}` : `${BASE_URL}/contacts`;
@@ -55,6 +54,19 @@ export const api = {
         body: formData,
       });
       if (!response.ok) throw new Error('Failed to update outreach');
+      const json = await response.json();
+      return json.data;
+    } catch (error) { throw error; }
+  },
+
+  updateStatus: async (contactId, status) => {
+    try {
+      const response = await fetch(`${BASE_URL}/contacts/${contactId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) throw new Error('Failed to update status');
       const json = await response.json();
       return json.data;
     } catch (error) { throw error; }
