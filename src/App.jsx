@@ -6,7 +6,7 @@ import { api } from './api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('list'); 
-  const [selectedNiche, setSelectedNiche] = useState(''); // Default empty
+  const [selectedNiche, setSelectedNiche] = useState(''); 
   const [niches, setNiches] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,15 +17,18 @@ function App() {
   }, []);
 
   const loadNiches = async () => {
-    const data = await api.getNiches();
-    setNiches(data);
-    // Auto-select first niche if available
-    if (data.length > 0 && !selectedNiche) {
-      setSelectedNiche(data[0].id);
+    try {
+      const data = await api.getNiches();
+      setNiches(data);
+      if (data.length > 0 && !selectedNiche) {
+        setSelectedNiche(data[0].id);
+      }
+    } catch (e) {
+      console.error("Failed to load niches");
     }
   };
 
-  // 2. Fetch Contacts when Niche or Tab changes
+  // 2. Fetch Contacts
   useEffect(() => {
     if (activeTab === 'list' && selectedNiche) {
       fetchContacts();
@@ -44,15 +47,14 @@ function App() {
     }
   };
 
-  // 3. Handle Creating a New Niche
   const handleAddNiche = async () => {
-    const name = prompt("Enter new Niche Name (e.g., 'Gyms', 'Lawyers'):");
+    const name = prompt("Enter new Niche Name (e.g., 'Real Estate'):");
     if (name) {
       try {
         const newNiche = await api.createNiche(name);
-        setNiches([...niches, newNiche]); // Update local list
-        setSelectedNiche(newNiche.id);    // Select it immediately
-        alert(`Niche "${newNiche.name}" created!`);
+        setNiches([...niches, newNiche]);
+        setSelectedNiche(newNiche.id);
+        alert(`Category "${newNiche.name}" created!`);
       } catch (e) {
         alert("Failed to create niche.");
       }
@@ -61,7 +63,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Header with Dynamic Dropdown + Create Button */}
       {activeTab === 'list' && (
         <header className="header">
           <h1>My Leads</h1>
@@ -72,19 +73,10 @@ function App() {
               onChange={(e) => setSelectedNiche(Number(e.target.value))}
               disabled={niches.length === 0}
             >
-              {niches.length === 0 && <option>No Niches</option>}
+              {niches.length === 0 && <option>Loading...</option>}
               {niches.map(n => <option key={n.id} value={n.id}>{n.name}</option>)}
             </select>
-            
-            <button 
-              onClick={handleAddNiche}
-              style={{
-                background: '#2563eb', color: 'white', border: 'none', 
-                borderRadius: '8px', padding: '0 12px', fontSize: '1.2rem', cursor: 'pointer'
-              }}
-            >
-              +
-            </button>
+            <button onClick={handleAddNiche} className="add-niche-btn">+</button>
           </div>
         </header>
       )}
@@ -93,6 +85,7 @@ function App() {
         {activeTab === 'list' ? (
           <ContactList 
             contacts={contacts} 
+            niches={niches} /* <--- NEW: Passing the list of names down */
             isLoading={loading} 
             onRefresh={fetchContacts} 
           />
@@ -100,7 +93,7 @@ function App() {
           <AddContact 
             onAdd={() => setActiveTab('list')} 
             niches={niches} 
-            onNewNiche={handleAddNiche} // Pass create function to form too
+            onNewNiche={handleAddNiche} 
           />
         )}
       </main>
