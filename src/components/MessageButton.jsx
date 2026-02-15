@@ -2,16 +2,17 @@ import React from 'react';
 
 const MessageButton = ({ phone, imageUrl, text, label }) => {
   const handleSend = async () => {
-    // 1. Clean phone number (used only for fallback if share fails)
-    const cleanPhone = phone.replace(/\D/g, ''); 
+    // 1. Clean phone number and catch old bad formats
+    let cleanPhone = phone.replace(/\D/g, ''); 
+    if (cleanPhone.startsWith('2340')) cleanPhone = '234' + cleanPhone.substring(4);
+    if (cleanPhone.startsWith('0')) cleanPhone = '234' + cleanPhone.substring(1);
 
-    // 2. Handle Image Sharing Logic
+    // 2. Your Native Image Sharing Logic (Preserved exactly)
     if (imageUrl) {
       try {
         const response = await fetch(imageUrl);
         const blob = await response.blob();
         
-        // Mobile Native Share (This opens the "Share Sheet")
         if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'image.jpg', { type: blob.type })] })) {
              await navigator.share({
                 files: [new File([blob], 'image.jpg', { type: blob.type })],
@@ -24,9 +25,9 @@ const MessageButton = ({ phone, imageUrl, text, label }) => {
       }
     }
 
-    // 3. Fallback: If no image or share fails, open WhatsApp Chat directly
+    // 3. Fallback: Safer navigation that bypasses mobile popup blockers
     const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text || '')}`;
-    window.open(waUrl, '_blank');
+    window.location.href = waUrl; 
   };
 
   return (
