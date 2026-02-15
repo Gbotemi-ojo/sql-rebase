@@ -6,11 +6,19 @@ import { api } from '../api';
 const ContactList = ({ contacts, niches, isLoading, onRefresh }) => {
   const [editingId, setEditingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
 
   // Filter Logic
   const filteredContacts = contacts.filter(c => {
     if (filterStatus === 'all') return true;
     return c.status === filterStatus;
+  });
+
+  // Sort Logic (Date Added)
+  const sortedContacts = [...filteredContacts].sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0).getTime();
+    const dateB = new Date(b.createdAt || 0).getTime();
+    return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
   });
 
   // Status Change Handler
@@ -23,32 +31,41 @@ const ContactList = ({ contacts, niches, isLoading, onRefresh }) => {
     }
   };
 
-  if (isLoading) return <div style={{padding: 40, textAlign: 'center', color: '#64748b'}}>Loading leads...</div>;
-  if (!contacts || contacts.length === 0) return <div style={{padding: 40, textAlign: 'center', color: '#64748b'}}>📭 No leads found. Add one!</div>;
+  if (isLoading) return <div className="empty-state">Loading leads...</div>;
+  if (!contacts || contacts.length === 0) return <div className="empty-state">📭 No leads found. Add one!</div>;
 
   return (
     <div>
-      {/* Filter Bar */}
-      <div className="filter-bar">
-        {['all', 'pending', 'replied', 'successful', 'ignored'].map(status => (
-          <button 
-            key={status}
-            className={`filter-pill ${filterStatus === status ? 'active' : ''}`}
-            onClick={() => setFilterStatus(status)}
-          >
-            {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-          </button>
-        ))}
+      {/* Filters and Sorting Row */}
+      <div className="controls-row">
+        <div className="filter-bar">
+          {['all', 'pending', 'replied', 'successful', 'ignored'].map(status => (
+            <button 
+              key={status}
+              className={`filter-pill ${filterStatus === status ? 'active' : ''}`}
+              onClick={() => setFilterStatus(status)}
+            >
+              {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+        
+        <button 
+          className="sort-btn" 
+          onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
+        >
+          {sortOrder === 'newest' ? '🔽 Newest' : '🔼 Oldest'}
+        </button>
       </div>
 
-      {filteredContacts.length === 0 && (
-        <div style={{padding: 40, textAlign: 'center', color: '#64748b'}}>
+      {sortedContacts.length === 0 && (
+        <div className="empty-state">
            No {filterStatus === 'all' ? '' : filterStatus} leads found.
         </div>
       )}
 
       <div className="contact-list">
-        {filteredContacts.map((contact) => {
+        {sortedContacts.map((contact) => {
           const isSetup = !!contact.msg1_text;
 
           if (editingId === contact.id) {
@@ -79,17 +96,21 @@ const ContactList = ({ contacts, niches, isLoading, onRefresh }) => {
                 </select>
               </div>
 
-              <a href={contact.socialLink} target="_blank" rel="noreferrer" className="source-link">🔗 Visit Profile</a>
+              {/* Added Date and proper spacing */}
+              <div className="card-meta">
+                <a href={contact.socialLink} target="_blank" rel="noreferrer" className="source-link">🔗 Visit Profile</a>
+                <span className="date-badge">Added: {new Date(contact.createdAt).toLocaleDateString()}</span>
+              </div>
 
               {!isSetup ? (
-                <div style={{textAlign: 'center', padding: '20px 0'}}>
+                <div style={{textAlign: 'center', marginTop: '10px'}}>
                   <button className="primary-btn" onClick={() => setEditingId(contact.id)}>
                     ⚙️ Auto-Fill Template
                   </button>
                 </div>
               ) : (
-                <div>
-                  <div className="action-grid" style={{gridTemplateColumns: '1fr 1fr'}}>
+                <div style={{marginTop: '15px'}}>
+                  <div className="action-grid">
                     <MessageButton phone={contact.phoneNumber} imageUrl={null} text={contact.msg1_text} label="1. Intro" />
                     <MessageButton phone={contact.phoneNumber} imageUrl={contact.msg2_image} text={contact.msg2_text} label="2. Curiosity" />
                     <MessageButton phone={contact.phoneNumber} imageUrl={contact.msg3_image} text={contact.msg3_text} label="3. Screenshot" />
@@ -97,9 +118,9 @@ const ContactList = ({ contacts, niches, isLoading, onRefresh }) => {
                   </div>
                   
                   <button 
-                    className="msg-btn" 
+                    className="secondary-btn" 
                     onClick={() => setEditingId(contact.id)} 
-                    style={{marginTop: '10px', width: '100%', justifyContent: 'center', background: '#fff', border: '1px solid #e2e8f0'}}
+                    style={{marginTop: '10px'}}
                   >
                     ✏️ Edit Messages
                   </button>
@@ -109,43 +130,6 @@ const ContactList = ({ contacts, niches, isLoading, onRefresh }) => {
           );
         })}
       </div>
-
-      <style>{`
-        .filter-bar {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 20px;
-          overflow-x: auto;
-          padding-bottom: 5px;
-        }
-        .filter-pill {
-          padding: 6px 16px;
-          border-radius: 20px;
-          border: 1px solid #cbd5e1;
-          background: white;
-          color: #64748b;
-          font-size: 0.9rem;
-          cursor: pointer;
-          white-space: nowrap;
-        }
-        .filter-pill.active {
-          background: #2563eb;
-          color: white;
-          border-color: #2563eb;
-        }
-        .status-select {
-          padding: 4px 8px;
-          border-radius: 6px;
-          border: 1px solid #ddd;
-          font-size: 0.85rem;
-          font-weight: 600;
-          cursor: pointer;
-        }
-        .status-select.status-pending { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
-        .status-select.status-replied { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
-        .status-select.status-successful { background: #f0fdf4; color: #15803d; border-color: #86efac; }
-        .status-select.status-ignored { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
-      `}</style>
     </div>
   );
 };
