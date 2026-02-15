@@ -25,7 +25,7 @@ body {
 
 /* --- Layout --- */
 .app-container { 
-  max-width: 500px; /* Constrains desktop to look like mobile */
+  max-width: 500px; 
   margin: 0 auto; 
   min-height: 100vh;
   background-color: var(--bg-color);
@@ -96,7 +96,7 @@ body {
 
 .input-field {
   width: 100%; padding: 14px; border: 1px solid var(--border);
-  border-radius: 10px; font-size: 16px; /* 16px prevents iOS zoom */
+  border-radius: 10px; font-size: 16px; 
   background: var(--bg-color); outline: none;
 }
 .input-field:focus { border-color: var(--primary); background: white;}
@@ -137,6 +137,12 @@ body {
 
 .source-link { color: var(--primary); text-decoration: none; font-weight: 600; }
 .date-badge { color: var(--text-muted); font-weight: 500; }
+
+.niche-change-select {
+  padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none;
+  background: #f8fafc; color: #475569; max-width: 130px;
+}
 
 /* --- Sorting & Filtering --- */
 .controls-row { padding: 10px 16px 15px 16px; display: flex; flex-direction: column; gap: 12px;}

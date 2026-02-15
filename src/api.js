@@ -40,7 +40,6 @@ export const api = {
         body: JSON.stringify(data),
       });
       const json = await response.json();
-      // NEW: Throw the exact error message from the backend if it fails
       if (!response.ok) throw new Error(json.error || 'Failed to create contact');
       return json.data;
     } catch (error) { throw error; }
@@ -66,6 +65,19 @@ export const api = {
         body: JSON.stringify({ status }),
       });
       if (!response.ok) throw new Error('Failed to update status');
+      const json = await response.json();
+      return json.data;
+    } catch (error) { throw error; }
+  },
+
+  updateNiche: async (contactId, nicheId) => {
+    try {
+      const response = await fetch(`${BASE_URL}/contacts/${contactId}/niche`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nicheId }),
+      });
+      if (!response.ok) throw new Error('Failed to update niche');
       const json = await response.json();
       return json.data;
     } catch (error) { throw error; }

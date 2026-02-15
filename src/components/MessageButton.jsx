@@ -7,12 +7,13 @@ const MessageButton = ({ phone, imageUrl, text, label }) => {
     if (cleanPhone.startsWith('2340')) cleanPhone = '234' + cleanPhone.substring(4);
     if (cleanPhone.startsWith('0')) cleanPhone = '234' + cleanPhone.substring(1);
 
-    // 2. Your Native Image Sharing Logic (Preserved exactly)
+    // 2. Handle Image Sharing Logic
     if (imageUrl) {
       try {
         const response = await fetch(imageUrl);
         const blob = await response.blob();
         
+        // Mobile Native Share (This opens the "Share Sheet")
         if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'image.jpg', { type: blob.type })] })) {
              await navigator.share({
                 files: [new File([blob], 'image.jpg', { type: blob.type })],

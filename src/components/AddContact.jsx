@@ -31,7 +31,6 @@ const AddContact = ({ onAdd, niches, onNewNiche }) => {
       alert('✅ Lead saved successfully!');
       onAdd(); 
     } catch (err) {
-      // Shows "This phone number is already saved..."
       alert(`❌ ${err.message}`);
     } finally {
       setLoading(false);
@@ -66,7 +65,6 @@ const AddContact = ({ onAdd, niches, onNewNiche }) => {
           });
           successCount++;
         } catch (err) {
-          // If it's a duplicate error, just increment the duplicate counter and move to the next
           if (err.message && err.message.includes('already saved')) {
             duplicateCount++;
           }

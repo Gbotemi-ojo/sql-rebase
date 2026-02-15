@@ -11,7 +11,6 @@ function App() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 1. Fetch Niches on Mount
   useEffect(() => {
     loadNiches();
   }, []);
@@ -28,7 +27,6 @@ function App() {
     }
   };
 
-  // 2. Fetch Contacts
   useEffect(() => {
     if (activeTab === 'list' && selectedNiche) {
       fetchContacts();
@@ -48,7 +46,7 @@ function App() {
   };
 
   const handleAddNiche = async () => {
-    const name = prompt("Enter new Niche Name (e.g., 'Real Estate'):");
+    const name = prompt("Enter new Category Name (e.g., 'Bookstore'):");
     if (name) {
       try {
         const newNiche = await api.createNiche(name);

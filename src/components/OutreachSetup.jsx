@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 
 // --- CONFIGURATION: NICHE TEMPLATES ---
-// Make sure to create these exact category names in your app
 const TEMPLATES = {
   "Bookstore": {
     msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
@@ -92,7 +91,7 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
   };
 
   const handleFileChange = (key, file) => {
-    // VERCEL PAYLOAD CHECK: Blocks files over 4MB to prevent silent crashes when uploading screenshots
+    // VERCEL PAYLOAD CHECK: Blocks files over 4MB to prevent silent crashes
     if (file && file.size > 4 * 1024 * 1024) {
         alert(`⚠️ File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Vercel limits uploads to ~4MB. Please compress the screenshot.`);
         return;
@@ -105,14 +104,12 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
       <h3 style={{marginTop: 0}}>⚙️ Setup Outreach for {contact.name}</h3>
       <form onSubmit={handleSubmit}>
         
-        {/* Msg 1: Text Only */}
         <div className="form-group">
           <label className="text-sm font-bold">1. Introduction (Text Only)</label>
           <textarea className="input-field" rows="3"
             value={msgs.msg1_text} onChange={e => setMsgs({...msgs, msg1_text: e.target.value})} />
         </div>
 
-        {/* Msg 2: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">2. Curiosity (Image + Text)</label>
           <textarea className="input-field" rows="3"
@@ -123,7 +120,6 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
           </div>
         </div>
 
-        {/* Msg 3: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">3. Screenshot (Image + Text)</label>
           <textarea className="input-field" rows="8"
@@ -134,7 +130,6 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
           </div>
         </div>
 
-        {/* Msg 4: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">4. CTA (Image + Text)</label>
           <textarea className="input-field" rows="3"
