@@ -2,54 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 
 // --- CONFIGURATION: NICHE TEMPLATES ---
+// Make sure to create these exact category names in your app
 const TEMPLATES = {
-  "Real estate": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your properties are presented online, especially for people coming from WhatsApp, Instagram, TikTok, so I decided to wait until I had something to show you.",
-    msg3: "It’s designed to help you:\n\n1. Make {BUSINESS_NAME} stand out as more credible\n2. Allow buyers to filter listings by budget and location\n3. Focus on serious buyers instead of back-and-forth chats\n\ne.t.c so we can discuss more on it.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Short-lets": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your apartments are presented online, especially for guests coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s designed to make your apartments look more premium, allow guests to filter by price, location, and stay duration, and help you attract serious bookings instead of endless questions.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Autocar dealership": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your cars are presented online, especially for buyers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s built to help {BUSINESS_NAME} look more trustworthy, let buyers filter cars by price, brand, year, and condition, and focus your time on serious buyers only.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Car rental services": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your rental cars are presented online, especially for customers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s designed to make your service look more professional, allow customers to filter cars by price and rental duration, and reduce back-and-forth before bookings.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Furniture": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your furniture pieces are presented online, especially for customers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s built to help {BUSINESS_NAME} look more premium, allow customers to filter items by price, category, and size, and make buying decisions easier.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Jewelry": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your jewelry is presented online, especially for customers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s designed to make your pieces look more luxurious, allow customers to browse by price and collection, and build trust before they message you.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
-  "Fashion / beauty": {
-    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your products are presented online, especially for customers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s built to help {BUSINESS_NAME} look more professional, allow customers to shop by price and category, and turn casual chats into actual orders.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
-  },
   "Bookstore": {
     msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
-    msg2: "I’ve been working on something recently that could really help how your books are presented online, especially for readers coming from WhatsApp and Instagram, so I decided to wait until I had something to show you.",
-    msg3: "It’s designed to make {BUSINESS_NAME} look more organized, allow readers to filter books by genre and price, and find what they want faster.",
-    msg4: "Would you like something like this set up for {BUSINESS_NAME}?"
+    msg2: "I’ve been working on something recently, but I was waiting until I had something to show you.",
+    msg3: "It’s designed to help you:\n\n• Make {BUSINESS_NAME} look more organized online\n• Let customers easily check if a book is in stock\n• Accept payments seamlessly using Paystack\n• Send broadcast messages to let customers know when a book is available\n• Allow customers to request specific books directly on the website\n• e.t.c",
+    msg4: "Would you be open to a quick chat or call whenever you are available for it?"
+  },
+  "Gyms, fitness studios & trainers": {
+    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
+    msg2: "I’ve been working on something recently, but I was waiting until I had something to show you.",
+    msg3: "It’s designed to help you:\n\n• Make {BUSINESS_NAME} look more professional online\n• List price lists and training plans clearly for potential clients\n• Send automated email reminders to customers to renew their subscriptions\n• Let members book sessions or classes directly\n• e.t.c",
+    msg4: "Would you be open to a quick chat or call whenever you are available for it?"
+  },
+  "Event planners & wedding vendors": {
+    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
+    msg2: "I’ve been working on something recently, but I was waiting until I had something to show you.",
+    msg3: "It’s built to help you:\n\n• Make {BUSINESS_NAME} look more premium online\n• Allow potential clients to filter packages by budget and event type\n• Showcase your past event portfolios beautifully\n• Let clients easily check your availability\n• e.t.c",
+    msg4: "Would you be open to a quick chat or call whenever you are available for it?"
+  },
+  "Pharmacy": {
+    msg1: "Hi 👋\n\nMy name is Gbotemi. I came across {BUSINESS_NAME} and decided to reach out.",
+    msg2: "I’ve been working on something recently, but I was waiting until I had something to show you.",
+    msg3: "It’s designed to help you:\n\n• Make {BUSINESS_NAME} look more organized and trustworthy\n• Allow customers to search for specific wellness products or over-the-counter items\n• Accept payments securely using Paystack\n• Send single-click broadcast messages to customers about restocks or offers\n• e.t.c",
+    msg4: "Would you be open to a quick chat or call whenever you are available for it?"
   }
 };
 
@@ -72,10 +49,10 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
     // 3. If template exists and fields are empty, fill them
     if (template && !contact.msg1_text) {
       setMsgs({
-        msg1_text: template.msg1.replace('{BUSINESS_NAME}', contact.name),
-        msg2_text: template.msg2,
-        msg3_text: template.msg3.replace('{BUSINESS_NAME}', contact.name), // Also replace in Msg 3 if needed
-        msg4_text: template.msg4.replace('{BUSINESS_NAME}', contact.name)
+        msg1_text: template.msg1.replace(/{BUSINESS_NAME}/g, contact.name),
+        msg2_text: template.msg2.replace(/{BUSINESS_NAME}/g, contact.name),
+        msg3_text: template.msg3.replace(/{BUSINESS_NAME}/g, contact.name), 
+        msg4_text: template.msg4.replace(/{BUSINESS_NAME}/g, contact.name)
       });
     } else {
       // Load existing saved data
@@ -107,13 +84,19 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
       alert('Assets saved!');
       onComplete();
     } catch (err) {
-      alert('Failed to save assets.');
+      alert('Failed to save assets. If you uploaded large images, Vercel might have blocked the request (4.5MB limit).');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleFileChange = (key, file) => {
+    // VERCEL PAYLOAD CHECK: Blocks files over 4MB to prevent silent crashes when uploading screenshots
+    if (file && file.size > 4 * 1024 * 1024) {
+        alert(`⚠️ File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Vercel limits uploads to ~4MB. Please compress the screenshot.`);
+        return;
+    }
     setFiles(prev => ({ ...prev, [key]: file }));
   };
 
@@ -132,7 +115,7 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
         {/* Msg 2: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">2. Curiosity (Image + Text)</label>
-          <textarea className="input-field" rows="4"
+          <textarea className="input-field" rows="3"
             value={msgs.msg2_text} onChange={e => setMsgs({...msgs, msg2_text: e.target.value})} />
           <div className="file-upload-box">
              <span>📸 Image 2:</span>
@@ -143,7 +126,7 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
         {/* Msg 3: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">3. Screenshot (Image + Text)</label>
-          <textarea className="input-field" rows="6"
+          <textarea className="input-field" rows="8"
             value={msgs.msg3_text} onChange={e => setMsgs({...msgs, msg3_text: e.target.value})} />
           <div className="file-upload-box">
              <span>📸 Image 3 (Screenshot):</span>
@@ -154,7 +137,7 @@ const OutreachSetup = ({ contact, niches, onComplete, onCancel }) => {
         {/* Msg 4: Image + Text */}
         <div className="form-group">
           <label className="text-sm font-bold">4. CTA (Image + Text)</label>
-          <textarea className="input-field" rows="2"
+          <textarea className="input-field" rows="3"
             value={msgs.msg4_text} onChange={e => setMsgs({...msgs, msg4_text: e.target.value})} />
           <div className="file-upload-box">
              <span>📸 Image 4:</span>
